@@ -14,10 +14,10 @@ public class Main
 
         try
         {
-            RandomAccessFile RAF = new RandomAccessFile("baza.txt", "rw");
+            RandomAccessFile RAF = new RandomAccessFile("file.txt", "rw");
 
             Product.saveToFile(products , RAF);
-            RAF.seek(0); // cofam się do początku textu. A nie gdzie skończyło się zapisywanie
+            RAF.seek(0); // comming back at the beggining of the next. Not where saving was finished
 
             Product [] towarki = Product.readFromFile(RAF);
 
@@ -40,11 +40,11 @@ public class Main
 
             try
             {
+                System.out.println("Hey im read from file!");
                 Product b = new Product();
-
                 b.readRecord(RAF, 3);
 
-// wystąpi błd to tego poniżej nie wykona
+// if will be error the instruction below wont work
 
                 System.out.println(b);
                 System.out.println("lala");
@@ -54,10 +54,10 @@ public class Main
                 System.out.println(err.getMessage());
             }
             RAF.close();
-        }
-        catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-        }
+            }
+            catch (IOException e)
+            {
+                System.out.println(e.getMessage());
+            }
     }
 }

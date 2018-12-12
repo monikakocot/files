@@ -28,55 +28,60 @@ public class Product {
         this.price = price;
         this.name = name;
     }
-    public Product(double price, String name, int rok, int m, int dz)
+    public Product(double price, String name, int r, int m, int dz)
     {
         this(price,name);
-        GregorianCalendar calendar = new GregorianCalendar(rok, m-1, dz);
+        GregorianCalendar calendar = new GregorianCalendar(r, m-1, dz);
         this.releaseDate = calendar.getTime();
     }
 
 // save everything
 
-    public static void saveToFile(Product[] towar, DataOutput outS) throws IOException
+    public static void saveToFile(Product[] product, DataOutput outS) throws IOException
     {
-        for (int i = 0; i < towar.length; i++)
-            towar[i].saveData(outS);
+        for (int i = 0; i < product.length; i++)
+            product[i].saveData(outS);
     }
 
-// read everything
-    public static Product[] readFromFile(RandomAccessFile RAF) throws IOException
-    {
-        int ilRekordow = (int) (RAF.length()/Product.RECORD_LENGHT );
-// Lenght of all bajts divided by Lenght of record = number of records
-        Product[] products = new Product[ilRekordow];
-
-        for (int i = 0; i < ilRekordow; i++)
-        {
-            products[i] = new Product();
-            products[i].readData(RAF);
-        }
-
-        return products;
-    }
-
-// UPGRATE - single saving
-
+    // UPGRATE - single saving
+//The DataOutput interface provides for converting data from any of the Java
+//primitive types to a series of bytes and writing these bytes to a binary stream.
+//DataOutputStream lets an application write primitive Java data types to an output stream in a portable way.
     public void saveData(DataOutput outS) throws IOException
     {
+        // price
         outS.writeDouble(this.price);
 
+        //name
         StringBuffer stringB = new StringBuffer(Product.NAME_LENGHT );
         stringB.append(this.name);
         stringB.setLength(Product.NAME_LENGHT );
 
         outS.writeChars(stringB.toString());
 
-        GregorianCalendar kalendarz = new GregorianCalendar();
-        kalendarz.setTime(this.releaseDate);
+        //date
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(this.releaseDate);
 
-        outS.writeInt(kalendarz.get(Calendar.YEAR));
-        outS.writeInt((kalendarz.get(Calendar.MONTH)+1));
-        outS.writeInt(kalendarz.get(Calendar.DAY_OF_MONTH));
+        outS.writeInt(calendar.get(Calendar.YEAR));
+        outS.writeInt((calendar.get(Calendar.MONTH)+1));
+        outS.writeInt(calendar.get(Calendar.DAY_OF_MONTH));
+    }
+
+    // read everything
+    public static Product[] readFromFile(RandomAccessFile RAF) throws IOException
+    {
+        int numberOfRecords = (int) (RAF.length()/Product.RECORD_LENGHT );
+// Lenght of all bajts divided by Lenght of record = number of records
+        Product[] products = new Product[numberOfRecords ];
+
+        for (int i = 0; i < numberOfRecords ; i++)
+        {
+            products[i] = new Product();
+            products[i].readData(RAF);
+        }
+
+        return products;
     }
 
 // UPGRATE - single reading
@@ -91,7 +96,7 @@ public class Product {
         {
             char tCh = inS.readChar();
 
-            if (tCh != '\0')
+            if (tCh != '\0') //token
                 tString.append(tCh);
         }
 
@@ -114,9 +119,10 @@ public class Product {
             this.readData(RAF);
         }
         else
-            throw new NoRecord("There is no recors");
+            throw new NoRecord("There is no records");
     }
 
+    //GETTERS, SETTERS, TO STRING
 
     public void setReleaseDate(int r, int m, int dz)
     {
